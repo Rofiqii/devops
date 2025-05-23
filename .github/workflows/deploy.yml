@@ -17,22 +17,25 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
+          echo "📁 Masuk ke direktori proyek..."
           cd /root/devops
+
+          echo "🔄 Menarik update dari branch main..."
           git pull origin main
-          
-          echo "🚧 Membongkar container lama..."
+
+          echo "🧹 Menghentikan container lama..."
           docker-compose down
-          
-          echo "🔨 Membangun ulang container..."
+
+          echo "⚙️ Membangun dan menjalankan ulang container..."
           docker-compose up -d --build
 
-          echo "📦 Menjalankan composer install..."
+          echo "📦 Menjalankan composer install di container..."
           docker exec -u www-data laravel-app composer install --no-interaction --prefer-dist --optimize-autoloader
 
-          echo "🗝️ Generate key..."
+          echo "🔐 Generate APP key..."
           docker exec -u www-data laravel-app php artisan key:generate
 
-          echo "📄 Menjalankan migrasi..."
+          echo "🧪 Menjalankan migrasi database..."
           docker exec -u www-data laravel-app php artisan migrate --force
 
-          echo "✅ Deployment selesai!"
+          echo "✅ Deploy selesai!"
