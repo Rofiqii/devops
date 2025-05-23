@@ -18,7 +18,7 @@ jobs:
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
           echo "📁 Masuk ke direktori proyek..."
-          cd /root/devops
+          cd /var/www/devops
 
           echo "🔄 Menarik update dari branch main..."
           git pull origin main
