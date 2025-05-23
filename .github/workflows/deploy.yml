@@ -19,5 +19,20 @@ jobs:
         script: |
           cd /root/devops
           git pull origin main
+          
+          echo "🚧 Membongkar container lama..."
           docker-compose down
+          
+          echo "🔨 Membangun ulang container..."
           docker-compose up -d --build
+
+          echo "📦 Menjalankan composer install..."
+          docker exec -u www-data laravel-app composer install --no-interaction --prefer-dist --optimize-autoloader
+
+          echo "🗝️ Generate key..."
+          docker exec -u www-data laravel-app php artisan key:generate
+
+          echo "📄 Menjalankan migrasi..."
+          docker exec -u www-data laravel-app php artisan migrate --force
+
+          echo "✅ Deployment selesai!"
