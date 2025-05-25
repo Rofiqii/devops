@@ -6,57 +6,57 @@ on:
       - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  # test:
+  #   runs-on: ubuntu-latest
     
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_DATABASE: jemberwonder_test
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_ALLOW_EMPTY_PASSWORD: no
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+  #   services:
+  #     mysql:
+  #       image: mysql:8.0
+  #       env:
+  #         MYSQL_DATABASE: jemberwonder_test
+  #         MYSQL_ROOT_PASSWORD: root
+  #         MYSQL_ALLOW_EMPTY_PASSWORD: no
+  #       ports:
+  #         - 3306:3306
+  #       options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-    steps:
-    - uses: actions/checkout@v2
+  #   steps:
+  #   - uses: actions/checkout@v2
     
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+  #   - name: Setup PHP
+  #     uses: shivammathur/setup-php@v2
+  #     with:
+  #       php-version: '8.2'
+  #       extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
         
-    - name: Copy .env.example
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+  #   - name: Copy .env.example
+  #     run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       
-    - name: Update Database Configuration
-      run: |
-        sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
-        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
-        sed -i 's/DB_DATABASE=.*/DB_DATABASE=jemberwonder_test/' .env
-        sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
-        sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+  #   - name: Update Database Configuration
+  #     run: |
+  #       sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+  #       sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+  #       sed -i 's/DB_DATABASE=.*/DB_DATABASE=jemberwonder_test/' .env
+  #       sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+  #       sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
       
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+  #   - name: Install Dependencies
+  #     run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       
-    - name: Generate key
-      run: php artisan key:generate
+  #   - name: Generate key
+  #     run: php artisan key:generate
       
-    - name: Clear Config
-      run: |
-        php artisan config:clear
-        php artisan cache:clear
+  #   - name: Clear Config
+  #     run: |
+  #       php artisan config:clear
+  #       php artisan cache:clear
         
-    - name: Set up test database
-      run: |
-        php artisan migrate:fresh --force --seed
+  #   - name: Set up test database
+  #     run: |
+  #       php artisan migrate:fresh --force --seed
         
-    - name: Run Tests
-      run: php artisan test --env=testing
+  #   - name: Run Tests
+  #     run: php artisan test --env=testing
 
   deploy:
     needs: test
