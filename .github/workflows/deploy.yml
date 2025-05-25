@@ -15,6 +15,7 @@ jobs:
         env:
           MYSQL_DATABASE: jemberwonder_test
           MYSQL_ROOT_PASSWORD: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: no
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -29,7 +30,15 @@ jobs:
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
         
     - name: Copy .env.example
-      run: cp .env.example .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      
+    - name: Update Database Configuration
+      run: |
+        sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+        sed -i 's/DB_DATABASE=.*/DB_DATABASE=jemberwonder_test/' .env
+        sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+        sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
       
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -37,14 +46,17 @@ jobs:
     - name: Generate key
       run: php artisan key:generate
       
-    - name: Set up test database
+    - name: Clear Config
       run: |
         php artisan config:clear
-        php artisan migrate --force
-        php artisan db:seed --force
+        php artisan cache:clear
+        
+    - name: Set up test database
+      run: |
+        php artisan migrate:fresh --force --seed
         
     - name: Run Tests
-      run: php artisan test
+      run: php artisan test --env=testing
 
   deploy:
     needs: test
