@@ -38,7 +38,18 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-      run: vendor/bin/phpunit
+      run: |
+        echo "🧪 Menjalankan Unit Tests..."
+        echo "----------------------------------------"
+        vendor/bin/phpunit --testsuite Unit
+        
+        echo "\n🧪 Menjalankan Feature Tests..."
+        echo "----------------------------------------"
+        vendor/bin/phpunit --testsuite Feature
+        
+        echo "\n📊 Ringkasan Hasil Test:"
+        echo "----------------------------------------"
+        vendor/bin/phpunit --testdox
 
   deploy:
     needs: test
