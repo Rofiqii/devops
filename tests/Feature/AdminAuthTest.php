@@ -16,7 +16,7 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->post('/loginadmin', [
+        $response = $this->post('/konfirmasiloginadmin', [
             'username_admin' => 'admin',
             'pw_admin' => '123456789'
         ]);
@@ -30,7 +30,7 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->post('/loginadmin', [
+        $response = $this->post('/konfirmasiloginadmin', [
             'username_admin' => 'admin',
             'pw_admin' => 'wrongpassword'
         ]);
