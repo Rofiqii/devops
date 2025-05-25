@@ -45,7 +45,7 @@ Route::post('/admin/insert-wisata', [AdminController::class, 'insertWisata'])->n
 Route::get('/edit-wisata-admin/{kd_wisata}', [AdminController::class, 'showEditWisata'])->name('editWisataAdmin');
 Route::put('/update-wisata-admin/{kd_wisata}', [AdminController::class, 'updateWisata'])->name('updateWisataAdmin');
 Route::delete('/delete-wisata-admin/{kd_wisata}', [AdminController::class, 'deleteWisata'])->name('deleteWisataAdmin');
-Route::get('/detail-wisata-admin/{id}', [AdminController::class, 'showDetailWisataAdmin'])->name('detailWisataAdmin');
+Route::get('/detail-wisata-admin/{kd_wisata}', [AdminController::class, 'showDetailWisataAdmin'])->name('detailWisataAdmin');
 Route::get('/admin/event', [AdminController::class, 'showEventAdmin'])->name('eventadmin');
 Route::get('/admin/form-event', [AdminController::class, 'showFormEventAdmin'])->name('formeventadmin');
 Route::post('/admin/insert-event', [AdminController::class, 'insertEvent'])->name('tambahevent');

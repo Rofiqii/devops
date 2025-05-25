@@ -4,256 +4,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JemberWonder - Landing Page</title>
+    <title>JemberWonder - Explore Jember's Beauty</title>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script>
+        function handleImageError(img) {
+            console.error('Failed to load image:', img.src);
+            img.style.backgroundColor = '#ddd';
+            img.alt = 'Image failed to load';
+        }
+    </script>
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1d4ed8;
+            --text-light: #f8fafc;
+            --text-dark: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-color: #000;
+            color: var(--text-light);
+        }
+
         #background {
             background-image: url("{{ asset('img/air_terjun.jpg') }}");
             background-size: cover;
-            filter: blur(3px) brightness(80%);
-            position: absolute;
-            top: 0px;
+            background-position: center;
+            filter: brightness(40%) contrast(120%);
+            position: fixed;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            bottom: 0;
-            transition: background-image 1s ease-in-out;
-        }
-
-        .content h1,
-        .content p {
-            transition: opacity 0.5s ease-in-out;
-            opacity: 0;
-        }
-
-        .content h1.visible,
-        .content p.visible {
-            opacity: 1;
-        }
-
-        body {
-            /* background-color: #f0f0f0; */
-            font-family: sans-serif;
-            overflow-x: hidden;
-            overflow-y: hidden;
-        }
-
-        h2 {
-            margin-left: 10px;
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            font-style: italic;
-            background: linear-gradient(to right, #F5F5F7, #F5F5F7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0;
-            animation: slideIn 1s forwards;
-            position: relative;
-        }
-
-        @keyframes slideIn {
-            0% {
-                opacity: 0;
-                left: -50px;
-            }
-
-            100% {
-                opacity: 1;
-                left: 0;
-            }
+            transition: all 1s ease-in-out;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgb(227, 242, 255, 0);
-            backdrop-filter: blur(2px);
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 2rem;
         }
 
         .logo {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            opacity: 0;
-            animation: slideDown 1s forwards;
-            position: relative;
-        }
-
-        @keyframes slideDown {
-            0% {
-                opacity: 0;
-                top: -50px;
-            }
-
-            100% {
-                opacity: 1;
-                top: 0;
-            }
+            gap: 1rem;
         }
 
         .logo img {
-            height: 95px;
-            margin-left: 10px;
-            margin-top: 10px;
+            height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled .logo img {
+            height: 50px;
+        }
+
+        .logo h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 0;
+            background: linear-gradient(45deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .centered-nav {
-            display: flex;
-            justify-content: center;
-            list-style-type: none;
-            gap: 35px;
-            margin-right: 140px;
-            margin-bottom: 0px;
+            gap: 2rem;
         }
 
         .centered-nav a {
+            color: var(--text-light);
+            font-weight: 500;
             text-decoration: none;
-            color: #e2e2e2;
-            font-size: 18px;
-            font-weight: bold;
-            transition: color 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
         }
 
-        .centered-nav a:hover {
-            color: rgb(26, 47, 230);
+        .centered-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
         }
 
-        #logoutForm {
-            display: flex;
-            justify-content: flex-end;
-            margin-right: 20px;
+        .centered-nav a:hover::after {
+            width: 100%;
         }
 
         main {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 80vh;
-            padding: 20px;
-            color: white;
+            padding: 6rem 2rem 2rem;
         }
 
         .content {
-            width: 40%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding: 20px;
-            text-align: left;
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+            color: #e2e8f0;
         }
 
         .images {
-            width: 60%;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
             position: relative;
+            height: 500px;
+            width: 800px;
+            perspective: 1000px;
         }
 
         .images img {
+            position: absolute;
             width: 400px;
-            height: 350px;
+            height: 300px;
             object-fit: cover;
-            border-radius: 5%;
-            transition: opacity 1s ease-in-out;
-            opacity: 0;
-        }
-
-        .images img.visible {
-            opacity: 1;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 1s ease-in-out;
         }
 
         .image1 {
-            position: absolute;
-            z-index: 2;
+            transform: translateZ(0) translateX(0) scale(1);
+            z-index: 3;
         }
 
         .image2 {
-            position: absolute;
-            z-index: 1;
-            transform: translate(40%, 0%) scale(0.9);
+            transform: translateZ(-100px) translateX(200px) scale(0.9);
+            z-index: 2;
+            filter: brightness(80%);
         }
 
         .image3 {
-            position: absolute;
-            z-index: 0;
-            transform: translate(80%, 0%) scale(0.8);
+            transform: translateZ(-200px) translateX(400px) scale(0.8);
+            z-index: 1;
+            filter: brightness(60%);
+        }
+
+        .btn-explore {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-explore:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <div class="logo">
-            <img src="{{ asset('img/logo JW putih.png') }}" alt="Jember Wonder">
-            <h2>Jember Wonder</h2>
+    @if(config('app.debug'))
+        <div style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; z-index: 9999; font-size: 12px;">
+            Asset Path: {{ asset('img/air_terjun.jpg') }}<br>
+            Public Path: {{ public_path('img/air_terjun.jpg') }}
         </div>
-        <nav>
-            <ul class="centered-nav">
-                <li><a href="/registercustomer">Daftar</a></li>
-                <li><a href="/logincustomer">Masuk</a></li>
-            </ul>
-        </nav>
-    </header>
+    @endif
 
     <div id="background"></div>
 
-    <main>
-        <div class="content">
-            <h1>Main Content</h1>
-            <p>INI DESKRIPSI</p>
+    <header>
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo animate__animated animate__fadeInLeft">
+                    <img src="{{ asset('img/logo JW putih.png') }}" alt="Jember Wonder" onerror="handleImageError(this)">
+                    <h2>Jember Wonder</h2>
+                </div>
+                <nav>
+                    <ul class="centered-nav list-unstyled d-flex animate__animated animate__fadeInRight">
+                        <li><a href="/registercustomer">Daftar</a></li>
+                        <li><a href="/logincustomer">Masuk</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="images">
-            <img src="{{ asset('img/air_terjun.jpg') }}" alt="placeholder 1" class="image1">
-            <img src="{{ asset('img/Teluk_love.jpeg') }}" alt="placeholder 2" class="image2">
-            <img src="{{ asset('img/watu_ulo.jpg') }}" alt="placeholder 3" class="image3">
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="content animate__animated animate__fadeInUp">
+                        <h1>Discover Jember's Hidden Gems</h1>
+                        <p>Jelajahi keindahan alam dan budaya Kabupaten Jember yang menakjubkan. Dari air terjun yang memesona hingga pantai yang eksotis, temukan pengalaman wisata tak terlupakan bersama JemberWonder.</p>
+                        <a href="/explore" class="btn-explore">Mulai Petualangan</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="images floating">
+                        <img src="{{ asset('img/watu_ulo.jpg') }}" alt="Pantai Watu Ulo" class="image1" onerror="handleImageError(this)">
+                        <img src="{{ asset('img/Teluk_love.jpeg') }}" alt="Teluk Love" class="image2" onerror="handleImageError(this)">
+                        <img src="{{ asset('img/watu_ulo.jpg') }}" alt="Pantai Watu Ulo" class="image3" onerror="handleImageError(this)">
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script>
-        var images = [
-            "{{ asset('img/air_terjun.jpg') }}",
+        // Enhanced image rotation with smooth transitions
+        const images = [
+            "{{ asset('img/watu_ulo.jpg') }}",
             "{{ asset('img/Teluk_love.jpeg') }}",
             "{{ asset('img/watu_ulo.jpg') }}"
         ];
-        var titles = ["JemberWonder", "JemberWonder", "JemberWonder"];
-        var descriptions = ["JemberWonder adalah website tentang tempat-tempat wisata yang ada di Kabupaten Jember", "JemberWonder adalah website tentang tempat-tempat wisata yang ada di Kabupaten Jember", "JemberWonder adalah website tentang tempat-tempat wisata yang ada di Kabupaten Jember"];
-        var index = 0;
 
-        function changeImage() {
-            var h1Element = document.querySelector('.content h1');
-            var pElement = document.querySelector('.content p');
+        // Add console logging for debugging
+        console.log('Image paths:', images);
 
-            h1Element.classList.remove('visible');
-            pElement.classList.remove('visible');
+        const titles = [
+            "Discover Jember's Hidden Gems",
+            "Experience Natural Beauty",
+            "Adventure Awaits in Jember"
+        ];
+        const descriptions = [
+            "Jelajahi keindahan alam dan budaya Kabupaten Jember yang menakjubkan. Dari air terjun yang memesona hingga pantai yang eksotis, temukan pengalaman wisata tak terlupakan bersama JemberWonder.",
+            "Nikmati pemandangan alam yang memukau di setiap sudut Jember. Dari perbukitan hijau hingga pantai yang menawan, setiap destinasi menawarkan pengalaman yang unik.",
+            "Bersiaplah untuk petualangan tak terlupakan di Jember. Dengan beragam destinasi wisata yang menakjubkan, setiap momen akan menjadi kenangan indah yang tak terlupakan."
+        ];
+        let currentIndex = 0;
 
-            var imageElements = document.querySelectorAll('.images img');
-            imageElements.forEach(img => img.classList.remove('visible'));
+        function updateContent() {
+            const background = document.getElementById('background');
+            const title = document.querySelector('.content h1');
+            const description = document.querySelector('.content p');
+            const imageElements = document.querySelectorAll('.images img');
 
-            setTimeout(function() {
-                document.getElementById('background').style.backgroundImage = 'url(' + images[index] + ')';
-                h1Element.innerText = titles[index];
-                pElement.innerText = descriptions[index];
-                h1Element.classList.add('visible');
-                pElement.classList.add('visible');
+            // Fade out
+            background.style.opacity = '0';
+            title.style.opacity = '0';
+            description.style.opacity = '0';
+            imageElements.forEach(img => img.style.opacity = '0');
 
+            setTimeout(() => {
+                // Update content
+                background.style.backgroundImage = `url(${images[currentIndex]})`;
+                title.textContent = titles[currentIndex];
+                description.textContent = descriptions[currentIndex];
+                
+                // Update carousel images
                 imageElements.forEach((img, i) => {
-                    img.src = images[(index + i) % images.length];
-                    img.classList.add('visible');
+                    img.src = images[(currentIndex + i) % images.length];
                 });
 
-                index = (index + 1) % images.length;
+                // Fade in
+                background.style.opacity = '1';
+                title.style.opacity = '1';
+                description.style.opacity = '1';
+                imageElements.forEach(img => img.style.opacity = '1');
+
+                currentIndex = (currentIndex + 1) % images.length;
             }, 500);
         }
 
-        changeImage();
-        setInterval(changeImage, 7000);
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
 
+        // Start the content rotation
+        updateContent();
+        setInterval(updateContent, 7000);
     </script>
 </body>
 

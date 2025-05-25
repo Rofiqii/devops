@@ -8,6 +8,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -67,12 +68,17 @@ class LoginController extends Controller
         $username = $request->input('username_admin');
         $password = $request->input('pw_admin');
 
-        $admin = admin::where('username_admin', $username)->first();
+        $admin = Admin::where('username_admin', $username)->first();
 
         if (!$admin) {
             return redirect()->route('indexadmin')->withErrors(['error' => 'Username tidak ditemukan']);
         }
-        if ($admin->pw_admin === $password) {
+
+        if (Hash::check($password, $admin->pw_admin)) {
+            // Create a session for the admin
+            session(['admin_id' => $admin->id]);
+            session(['admin_username' => $admin->username_admin]);
+            
             return redirect()->intended('/admin/dashboard');
         } else {
             return redirect()->route('indexadmin')->withErrors(['error' => 'Username atau password salah']);

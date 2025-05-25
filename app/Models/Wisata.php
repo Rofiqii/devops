@@ -14,15 +14,16 @@ class Wisata extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'kd_wisata';
     protected $table = 'wisata';
+    protected $primaryKey = 'kd_wisata';
+    public $incrementing = true;
 
     /**
      * Indicates if the model should be timestamped.
      *
      * @var bool
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * The attributes that are mass assignable.
@@ -37,7 +38,8 @@ class Wisata extends Model
         'nama_wisata',
         'username_admin',
     ];
-        public function event()
+
+    public function event()
     {
         return $this->hasMany(Event::class, 'kd_wisata');
     }
