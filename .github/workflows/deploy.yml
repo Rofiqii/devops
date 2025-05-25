@@ -42,14 +42,14 @@ jobs:
             until php -r "
               try {
                 \$pdo = new PDO(
-                  \"mysql:host=\${DB_HOST};port=\${DB_PORT}\",
-                  \"\${DB_USERNAME}\",
-                  \"\${DB_PASSWORD}\"
+                  \"mysql:host=mysql;port=3306;dbname=jemberwonder\",
+                  \"root\",
+                  \"\"
                 );
-                echo \"Database connection successful\n\";
+                echo \"Database connection successful\\n\";
                 exit(0);
               } catch (PDOException \$e) {
-                echo \"Database connection failed: \" . \$e->getMessage() . \"\n\";
+                echo \"Database connection failed: \" . \$e->getMessage() . \"\\n\";
                 exit(1);
               }
             " || [ $counter -eq $max_tries ]; do
