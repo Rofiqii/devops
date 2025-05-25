@@ -65,23 +65,18 @@ class LoginController extends Controller
             return redirect()->route('indexadmin')->withErrors($validator)->withInput();
         }
 
-        $username = $request->input('username_admin');
-        $password = $request->input('pw_admin');
+        $credentials = [
+            'username_admin' => $request->username_admin,
+            'password' => $request->pw_admin
+        ];
 
-        $admin = Admin::where('username_admin', $username)->first();
-
-        if (!$admin) {
-            return redirect()->route('indexadmin')->withErrors(['error' => 'Username tidak ditemukan']);
-        }
-
-        if (Hash::check($password, $admin->pw_admin)) {
-            // Create a session for the admin
-            session(['admin_id' => $admin->id]);
-            session(['admin_username' => $admin->username_admin]);
-            
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $request->session()->regenerate();
             return redirect()->intended('/admin/dashboard');
-        } else {
-            return redirect()->route('indexadmin')->withErrors(['error' => 'Username atau password salah']);
         }
+
+        return redirect()->route('indexadmin')
+            ->withErrors(['error' => 'Username atau password salah'])
+            ->withInput($request->except('password'));
     }
 }

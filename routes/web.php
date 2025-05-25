@@ -25,7 +25,10 @@ Route::get('/loginadmin', [LoginController::class, 'showLoginFormAdmin'])->name(
 Route::post('/konfirmasilogincustomer', [LoginController::class, 'loginCus'])->name('loginCus');
 Route::post('/konfirmasiloginadmin', [LoginController::class, 'loginAdmin'])->name('loginAdmin');
 
-Route::get('/admin/dashboard', [DashboardController::class, 'showDashboardAdmin'])->name('dashboardadmin');
+Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/admin/dashboard', [DashboardController::class, 'showDashboardAdmin'])->name('dashboardadmin');
+});
+
 Route::get('/customer/dashboard', [DashboardController::class, 'showDashboardCus'])->name('dashboardcustomer');
 
 Route::post('/logout', [DashboardController::class, 'logout'])->name('logout');

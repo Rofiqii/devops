@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\Admin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthTest extends TestCase
 {
@@ -13,25 +14,19 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_can_login_with_correct_credentials()
     {
-        // Seed the admin
-        $this->seed(\Database\Seeders\AdminSeeder::class);
+        // Seed the admin with hashed password
+        Admin::create([
+            'username_admin' => 'admin',
+            'pw_admin' => Hash::make('123456789'),
+            'fullname_admin' => 'Administrator',
+            'pertanyaan' => 'Apa makanan favoritmu?',
+            'jawaban' => 'nasi goreng'
+        ]);
 
-        // First visit the initial login page
-        $response = $this->get('/logincustomer');
-        $response->assertStatus(200);
-
-        // Then visit the admin login page
-        $response = $this->get('/loginadmin');
-        $response->assertStatus(200);
-
-        // Now attempt the login with proper form fields
-        $response = $this->withSession(['_token' => csrf_token()])
-            ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
-            ->post('/konfirmasiloginadmin', [
-                'username_admin' => 'admin',
-                'pw_admin' => '123456789',
-                'password' => '123456789' // Adding both password fields to be sure
-            ]);
+        $response = $this->post('/konfirmasiloginadmin', [
+            'username_admin' => 'admin',
+            'pw_admin' => '123456789'
+        ]);
 
         $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticated('admin');
@@ -39,36 +34,29 @@ class AdminAuthTest extends TestCase
 
     public function test_admin_cannot_login_with_incorrect_password()
     {
-        // Seed the admin
-        $this->seed(\Database\Seeders\AdminSeeder::class);
+        // Seed the admin with hashed password
+        Admin::create([
+            'username_admin' => 'admin',
+            'pw_admin' => Hash::make('123456789'),
+            'fullname_admin' => 'Administrator',
+            'pertanyaan' => 'Apa makanan favoritmu?',
+            'jawaban' => 'nasi goreng'
+        ]);
 
-        // First visit the initial login page
-        $response = $this->get('/logincustomer');
-        $response->assertStatus(200);
-
-        // Then visit the admin login page
-        $response = $this->get('/loginadmin');
-        $response->assertStatus(200);
-
-        // Now attempt the login with wrong password
-        $response = $this->withSession(['_token' => csrf_token()])
-            ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
-            ->post('/konfirmasiloginadmin', [
-                'username_admin' => 'admin',
-                'pw_admin' => 'wrongpassword',
-                'password' => 'wrongpassword'
-            ]);
+        $response = $this->post('/konfirmasiloginadmin', [
+            'username_admin' => 'admin',
+            'pw_admin' => 'wrongpassword'
+        ]);
 
         $response->assertRedirect('/loginadmin');
-        $this->assertGuest();
+        $this->assertGuest('admin');
     }
 
     public function test_admin_can_access_dashboard_when_authenticated()
     {
-        // Create and authenticate as admin
         $admin = Admin::create([
             'username_admin' => 'testadmin',
-            'pw_admin' => bcrypt('password123'),
+            'pw_admin' => Hash::make('password123'),
             'fullname_admin' => 'Test Administrator',
             'pertanyaan' => 'Test Question',
             'jawaban' => 'Test Answer'
@@ -82,9 +70,7 @@ class AdminAuthTest extends TestCase
 
     public function test_guest_cannot_access_admin_dashboard()
     {
-        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
-            ->get('/admin/dashboard');
-        
+        $response = $this->get('/admin/dashboard');
         $response->assertRedirect('/loginadmin');
     }
 } 

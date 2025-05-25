@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Admin extends Model implements AuthenticatableContract
+class Admin extends Authenticatable
 {
-    use Authenticatable;
+    use Notifiable;
+
     protected $table = 'admin';
+    protected $guarded = ['id'];
+
     protected $fillable = [
         'username_admin',
         'pw_admin',
@@ -20,16 +19,34 @@ class Admin extends Model implements AuthenticatableContract
         'pertanyaan',
         'jawaban',
     ];
+
+    protected $hidden = [
+        'pw_admin',
+        'remember_token',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->pw_admin;
+    }
+
     public function getAuthIdentifierName()
     {
         return 'username_admin';
     }
-    public function getAuthIdentifier()
+
+    public function getRememberToken()
     {
-        return $this->username_admin;
+        return $this->remember_token;
     }
-    public function getAuthPassword()
+
+    public function setRememberToken($value)
     {
-        return $this->pw_admin;
+        $this->remember_token = $value;
+    }
+
+    public function getRememberTokenName()
+    {
+        return 'remember_token';
     }
 }
