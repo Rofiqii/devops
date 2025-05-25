@@ -59,7 +59,7 @@ jobs:
   #     run: php artisan test --env=testing
 
   deploy:
-    needs:
+    # needs: test  # Commenting this out since we disabled the test job
     runs-on: ubuntu-latest
 
     steps:
