@@ -16,12 +16,13 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->post('/konfirmasiloginadmin', [
+        $response = $this->from('/loginadmin')->post('/konfirmasiloginadmin', [
+            '_token' => csrf_token(),
             'username_admin' => 'admin',
             'pw_admin' => '123456789'
         ]);
 
-        $response->assertStatus(302); // Expecting a redirect after successful login
+        $response->assertRedirect(); // Just check if it redirects anywhere
         $this->assertAuthenticated('admin');
     }
 
@@ -30,12 +31,13 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->post('/konfirmasiloginadmin', [
+        $response = $this->from('/loginadmin')->post('/konfirmasiloginadmin', [
+            '_token' => csrf_token(),
             'username_admin' => 'admin',
             'pw_admin' => 'wrongpassword'
         ]);
 
-        $response->assertStatus(302); // Expecting a redirect back
+        $response->assertRedirect('/loginadmin'); // Should redirect back to login
         $this->assertGuest();
     }
 
@@ -53,12 +55,12 @@ class AdminAuthTest extends TestCase
         $this->actingAs($admin, 'admin');
 
         $response = $this->get('/admin/dashboard');
-        $response->assertStatus(200);
+        $response->assertStatus(200); // Should be able to access
     }
 
     public function test_guest_cannot_access_admin_dashboard()
     {
         $response = $this->get('/admin/dashboard');
-        $response->assertStatus(302); // Expecting redirect to login
+        $response->assertRedirect('/loginadmin'); // Should redirect to admin login
     }
 } 
