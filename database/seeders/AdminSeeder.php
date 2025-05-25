@@ -15,10 +15,10 @@ class AdminSeeder extends Seeder
     {
         DB::table('admin')->insert([
             'username_admin' => 'admin',
-            'pw_admin' => Hash::make('admin123'),
+            'pw_admin' => Hash::make('123456789'),
             'fullname_admin' => 'Administrator',
-            'pertanyaan' => 'Apa makanan favoritmu?',
-            'jawaban' => 'nasi goreng',
+            'pertanyaan' => 'Siapa nama ibu kandung Anda?',
+            'jawaban' => 'Admin',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
