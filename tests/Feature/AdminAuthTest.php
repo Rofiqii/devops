@@ -16,13 +16,24 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->from('/loginadmin')->post('/konfirmasiloginadmin', [
-            '_token' => csrf_token(),
-            'username_admin' => 'admin',
-            'pw_admin' => '123456789'
-        ]);
+        // First visit the initial login page
+        $response = $this->get('/logincustomer');
+        $response->assertStatus(200);
 
-        $response->assertRedirect(); // Just check if it redirects anywhere
+        // Then visit the admin login page
+        $response = $this->get('/loginadmin');
+        $response->assertStatus(200);
+
+        // Now attempt the login with proper form fields
+        $response = $this->withSession(['_token' => csrf_token()])
+            ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+            ->post('/konfirmasiloginadmin', [
+                'username_admin' => 'admin',
+                'pw_admin' => '123456789',
+                'password' => '123456789' // Adding both password fields to be sure
+            ]);
+
+        $response->assertRedirect('/admin/dashboard');
         $this->assertAuthenticated('admin');
     }
 
@@ -31,13 +42,24 @@ class AdminAuthTest extends TestCase
         // Seed the admin
         $this->seed(\Database\Seeders\AdminSeeder::class);
 
-        $response = $this->from('/loginadmin')->post('/konfirmasiloginadmin', [
-            '_token' => csrf_token(),
-            'username_admin' => 'admin',
-            'pw_admin' => 'wrongpassword'
-        ]);
+        // First visit the initial login page
+        $response = $this->get('/logincustomer');
+        $response->assertStatus(200);
 
-        $response->assertRedirect('/loginadmin'); // Should redirect back to login
+        // Then visit the admin login page
+        $response = $this->get('/loginadmin');
+        $response->assertStatus(200);
+
+        // Now attempt the login with wrong password
+        $response = $this->withSession(['_token' => csrf_token()])
+            ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+            ->post('/konfirmasiloginadmin', [
+                'username_admin' => 'admin',
+                'pw_admin' => 'wrongpassword',
+                'password' => 'wrongpassword'
+            ]);
+
+        $response->assertRedirect('/loginadmin');
         $this->assertGuest();
     }
 
@@ -55,12 +77,14 @@ class AdminAuthTest extends TestCase
         $this->actingAs($admin, 'admin');
 
         $response = $this->get('/admin/dashboard');
-        $response->assertStatus(200); // Should be able to access
+        $response->assertStatus(200);
     }
 
     public function test_guest_cannot_access_admin_dashboard()
     {
-        $response = $this->get('/admin/dashboard');
-        $response->assertRedirect('/loginadmin'); // Should redirect to admin login
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+            ->get('/admin/dashboard');
+        
+        $response->assertRedirect('/loginadmin');
     }
 } 
