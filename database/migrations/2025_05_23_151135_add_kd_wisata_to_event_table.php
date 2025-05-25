@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('event', function (Blueprint $table) {
-            // Only add the foreign key constraint since the column already exists
+            // Add the column first
+            $table->unsignedBigInteger('kd_wisata')->after('id');
+            // Then add the foreign key constraint
             $table->foreign('kd_wisata')->references('kd_wisata')->on('wisata')->onDelete('cascade');
         });
     }
@@ -24,6 +26,7 @@ return new class extends Migration
     {
         Schema::table('event', function (Blueprint $table) {
             $table->dropForeign(['kd_wisata']);
+            $table->dropColumn('kd_wisata');
         });
     }
 }; 
