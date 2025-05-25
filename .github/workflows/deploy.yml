@@ -19,6 +19,12 @@ jobs:
         script: |
           echo "📁 Masuk ke direktori proyek..."
           cd /var/www/devops
+          git config --global --add safe.directory /var/www/devops
+          git fetch origin
+          git reset --hard origin/main
+          docker compose down
+          docker compose up --build -d
+
 
           echo "🔄 Menarik update dari branch main..."
           git pull origin main
